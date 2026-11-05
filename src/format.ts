@@ -6,7 +6,7 @@ export type Digest = {
     sources: Listing<Source>
     markedVisits: Listing<MarkedVisit>
     pages: Listing<Page>
-    preliminary: {
+    preliminary?: {
         date: string
         totals: Totals
         topSource?: Source
@@ -166,7 +166,7 @@ function hasVisits(totals: Totals): boolean {
     return totals.users > 0 || totals.sessions > 0 || totals.views > 0
 }
 
-function preliminaryLine({ date, totals, topSource }: Digest['preliminary']): string {
+function preliminaryLine({ date, totals, topSource }: NonNullable<Digest['preliminary']>): string {
     const title = `🕐 <b>${formatDay(date)}, предварительно:</b>`
     if (!hasVisits(totals)) return `${title} ${NO_VISITS}`
     const source = topSource ? `, ${safe(sourceLabel(topSource))} ${topSource.sessions}` : ''
@@ -247,7 +247,11 @@ export function formatDigest(digest: Digest): string {
         [
             head.join('\n'),
             ...sections.filter(item => item.lines.length > 0 || item.cut).map(renderSection),
-            preliminaryLine(digest.preliminary),
+            ...(digest.preliminary
+                ? [
+                      preliminaryLine(digest.preliminary),
+                  ]
+                : []),
             ...(digest.thresholded
                 ? [
                       THRESHOLDED,
