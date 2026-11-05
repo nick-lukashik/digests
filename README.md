@@ -15,15 +15,15 @@ All dates are in `Asia/Tbilisi`.
 
 ## Environment
 
-| Variable                  | Required | What                                                                                                 |
-| ------------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| `GA_PROPERTY_ID`          | yes      | Digits                                                                                               |
-| `GA_SERVICE_ACCOUNT_JSON` | yes      | The whole JSON key of a service account with read access to the property. Secret                     |
-| `TELEGRAM_BOT_TOKEN`      | yes      | Secret                                                                                               |
-| `TELEGRAM_CHAT_ID`        | yes      | A negative integer                                                                                   |
-| `TELEGRAM_TOPIC_ID`       | yes      | `message_thread_id` of the topic                                                                     |
-| `DIGEST_DATE`             | no       | `YYYY-MM-DD`, for a run by hand: the full report for that day, the preliminary line for the next one |
-| `LOG_LEVEL`               | no       | `info` by default                                                                                    |
+| Variable                  | Required | What                                                                                                                     |
+| ------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `GA_PROPERTY_ID`          | yes      | Digits                                                                                                                   |
+| `GA_SERVICE_ACCOUNT_JSON` | yes      | The whole JSON key of a service account with read access to the property. Secret                                         |
+| `TELEGRAM_BOT_TOKEN`      | yes      | Secret                                                                                                                   |
+| `TELEGRAM_CHAT_ID`        | yes      | A negative integer                                                                                                       |
+| `TELEGRAM_TOPIC_ID`       | yes      | `message_thread_id` of the topic                                                                                         |
+| `DIGEST_DATE`             | no       | `YYYY-MM-DD`, for a run by hand: the full report for that day, and the preliminary line for the next one if it has ended |
+| `LOG_LEVEL`               | no       | `info` by default                                                                                                        |
 
 Invalid variables are named at start, with the reason, never with the value.
 

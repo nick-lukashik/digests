@@ -96,6 +96,25 @@ describe('digestDays', () => {
         })
     })
 
+    it.each([
+        [
+            'today',
+            '2026-11-06',
+        ],
+        [
+            'yesterday',
+            '2026-11-05',
+        ],
+        [
+            'a day to come',
+            '2026-11-07',
+        ],
+    ])('has no preliminary day when the next day has not ended: an override of %s', (_case, override) => {
+        expect(digestDays(new Date('2026-11-06T08:00:00Z'), override)).toEqual({
+            full: override,
+        })
+    })
+
     it('uses an override as the full day and the next day as preliminary', () => {
         expect(digestDays(new Date('2026-11-06T08:00:00Z'), '2026-10-31')).toEqual({
             full: '2026-10-31',

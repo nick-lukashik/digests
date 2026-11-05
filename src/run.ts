@@ -20,13 +20,14 @@ async function sendDigest(env: Env, now: Date, log: Logger): Promise<void> {
     const days = digestDays(now, env.DIGEST_DATE)
     const accessToken = await fetchAccessToken(env.GA_SERVICE_ACCOUNT_JSON, now)
     const report = (request: ReportRequest) => runReport(env.GA_PROPERTY_ID, accessToken, request)
+    const { preliminary: preliminaryDay } = days
     const [totals, sources, markedVisits, pages, preliminaryTotals, preliminarySources] = await Promise.all([
         report(totalsRequest(days.full)),
         report(sourcesRequest(days.full)),
         report(markedVisitsRequest(days.full)),
         report(pagesRequest(days.full)),
-        report(totalsRequest(days.preliminary)),
-        report(sourcesRequest(days.preliminary)),
+        preliminaryDay ? report(totalsRequest(preliminaryDay)) : undefined,
+        preliminaryDay ? report(sourcesRequest(preliminaryDay)) : undefined,
     ])
 
     const hidden = Object.entries({
@@ -37,7 +38,7 @@ async function sendDigest(env: Env, now: Date, log: Logger): Promise<void> {
         preliminaryTotals,
         preliminarySources,
     })
-        .filter(([, item]) => item.thresholded)
+        .filter(([, item]) => item?.thresholded)
         .map(([name]) => name)
     if (hidden.length > 0) {
         log.warn('Google hid part of the rows', {
@@ -57,17 +58,21 @@ async function sendDigest(env: Env, now: Date, log: Logger): Promise<void> {
             sources: readSources(sources),
             markedVisits: readMarkedVisits(markedVisits),
             pages: readPages(pages),
-            preliminary: {
-                date: days.preliminary,
-                totals: readTotals(preliminaryTotals),
-                topSource: readSources(preliminarySources).rows[0],
-            },
+            ...(preliminaryDay
+                && preliminaryTotals
+                && preliminarySources && {
+                    preliminary: {
+                        date: preliminaryDay,
+                        totals: readTotals(preliminaryTotals),
+                        topSource: readSources(preliminarySources).rows[0],
+                    },
+                }),
             thresholded: hidden.length > 0,
         }),
     )
     log.info('Digest sent', {
         date: days.full,
-        preliminaryDate: days.preliminary,
+        preliminaryDate: preliminaryDay,
     })
 }
 

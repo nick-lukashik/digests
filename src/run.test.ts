@@ -475,6 +475,22 @@ linkedin / post-nextjs: 5 визитов, 2:10
         expect(text).toContain('1 ноября, предварительно')
     })
 
+    it('asks nothing about a day that has not ended, and leaves its line out', async () => {
+        const calls = stubFetch()
+        await expect(
+            exec({
+                DIGEST_DATE: '2026-11-06',
+            }),
+        ).resolves.toBe(0)
+        const days = new Set(reportBodies(calls).map(body => body.dateRanges[0]?.startDate))
+        expect([
+            ...days,
+        ]).toEqual([
+            '2026-11-06',
+        ])
+        expect(telegramBody(calls).text).not.toContain('предварительно')
+    })
+
     it('reports a day without rows as nobody came, not as a failure', async () => {
         const calls = stubFetch({
             report: () =>

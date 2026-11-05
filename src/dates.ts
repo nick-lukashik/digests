@@ -3,7 +3,8 @@ export const TIME_ZONE = 'Asia/Tbilisi'
 
 export type DigestDays = {
     full: string
-    preliminary: string
+    /** Only a day that has ended: a run by hand for yesterday or today has none. */
+    preliminary?: string
 }
 
 /** The calendar day (YYYY-MM-DD) of an instant in TIME_ZONE. */
@@ -30,9 +31,13 @@ export function addDays(day: string, days: number): string {
  * `override` (DIGEST_DATE, a run by hand) names the full day instead.
  */
 export function digestDays(now: Date, override?: string): DigestDays {
-    const full = override ?? addDays(localDay(now), -2)
+    const today = localDay(now)
+    const full = override ?? addDays(today, -2)
+    const next = addDays(full, 1)
     return {
         full,
-        preliminary: addDays(full, 1),
+        ...(next < today && {
+            preliminary: next,
+        }),
     }
 }
