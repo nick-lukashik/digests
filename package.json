@@ -1,0 +1,31 @@
+{
+    "name": "digests",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Daily Google Analytics digest to a Telegram forum topic, run as a Kubernetes CronJob",
+    "type": "module",
+    "packageManager": "pnpm@12.16.1",
+    "engines": {
+        "node": ">=26.13.0",
+        "pnpm": ">=12.16.1"
+    },
+    "scripts": {
+        "clean": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\"",
+        "build": "pnpm clean && tsc -p tsconfig.build.json",
+        "start": "node --env-file-if-exists=.env dist/main.js",
+        "typecheck": "tsc --noEmit",
+        "lint": "biome check .",
+        "format": "biome check --write .",
+        "test": "vitest run",
+        "verify": "pnpm lint && pnpm typecheck && pnpm build && pnpm test"
+    },
+    "dependencies": {
+        "zod": "4.6.7"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "2.6.4",
+        "@types/node": "26.6.6",
+        "typescript": "7.0.2",
+        "vitest": "5.0.5"
+    }
+}
